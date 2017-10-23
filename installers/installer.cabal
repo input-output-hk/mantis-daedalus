@@ -1,6 +1,6 @@
-name:                cardano-installer
+name:                installer
 version:             0.1.0.0
-synopsis:            Cardano Installer
+synopsis:            Cardano and Mantis Installer
 description:         Please see README.md
 license:             MIT
 author:              Serokell
@@ -14,6 +14,29 @@ executable make-installer
   main-is:             Installer.hs
   other-modules:       MacInstaller
                      , WindowsInstaller
+                     , RewriteLibs
+                     , Launcher
+  build-depends:       base
+                     , filepath
+                     , text
+                     , Glob
+                     , nsis
+                     , turtle
+                     , directory
+                     , temporary
+                     , megaparsec
+
+  default-language:    Haskell2010
+  ghc-options:         -threaded -rtsopts
+                       -Wall
+                       -fno-warn-orphans
+                       -with-rtsopts=-N
+                       -O2
+  default-extensions: OverloadedStrings
+
+executable mantis-make-installer
+  main-is:             MantisInstaller.hs
+  other-modules:       MantisWindowsInstaller
                      , RewriteLibs
                      , Launcher
   build-depends:       base
