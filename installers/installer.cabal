@@ -36,7 +36,8 @@ executable make-installer
 
 executable mantis-make-installer
   main-is:             MantisInstaller.hs
-  other-modules:       MantisWindowsInstaller
+  other-modules:       MantisMacInstaller
+                     , MantisWindowsInstaller
                      , RewriteLibs
                      , Launcher
   build-depends:       base
