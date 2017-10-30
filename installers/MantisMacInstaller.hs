@@ -27,6 +27,7 @@ main = do
       pkg     = "dist/Daedalus-installer-" <> version <> ".pkg"
   createDirectoryIfMissing False "dist"
 
+  echo "Creating icons ..."
   procs "iconutil" ["--convert", "icns", "--output", T.pack dir <> "/../Resources/electron.icns", "icons/electron.iconset"] mempty
 
   echo "Preparing files ..."

@@ -38,6 +38,8 @@ executable mantis-make-installer
   main-is:             MantisInstaller.hs
   other-modules:       MantisMacInstaller
                      , MantisWindowsInstaller
+                     , MacInstaller
+                     , WindowsInstaller
                      , RewriteLibs
                      , Launcher
   build-depends:       base

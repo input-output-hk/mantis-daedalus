@@ -50,7 +50,6 @@ mantisWriteInstallerNSIS fullVersion = do
         --FIXME: Make Mantis logs location configurable so as to have them be in this Logs folder
         createDirectory "$APPDATA\\Daedalus\\Logs"
         createShortcut "$DESKTOP\\Daedalus.lnk" daedalusShortcut
-        file [] "log-config-prod.yaml"
         file [] "data\\ip-dht-mappings"
         file [] "version.txt"
         file [] "build-certificates-win64.bat"
@@ -59,7 +58,6 @@ mantisWriteInstallerNSIS fullVersion = do
         file [] "client.conf"
         file [] "wallet-topology.yaml"
         writeFileLines "$INSTDIR\\daedalus.bat" (map str mantisLauncherScript)
-        file [Recursive] "dlls\\"
         file [Recursive] "libressl\\"
         file [Recursive] "..\\release\\win32-x64\\Daedalus-win32-x64\\"
         setOutPath "$INSTDIR\\mantis\\"
