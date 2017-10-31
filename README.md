@@ -3,7 +3,7 @@ Daedalus - cryptocurrency wallet
 
 ## Automated build
 
-### CI/dev build scripts
+### Cardano CI/dev build scripts
 
 Platform-specific build scripts facilitate building Daedalus the way it is built
 by the IOHK CI:
@@ -16,8 +16,29 @@ by the IOHK CI:
 The result can be found at:
    - on OS X:    `${BUILD}/installers/dist/Daedalus-installer-*.pkg`
    - on WIndows: `${BUILD}/installers/daedalus-*-installer.exe`
+   
+### Mantis CI/dev build scripts
 
-### One-click build-fresh-daedalus scripts
+Platform-specific build scripts facilitate building Daedalus the way it is built
+by the IOHK CI:
+
+   - `scripts/mantis-build-installer-unix.sh     <DAEDALUS-VERSION> [OPTIONS..]`
+      - where OS is either `linux` (installer not currently supported) or `osx`
+      - facilitates installer upload to S3 via `--upload-s3`
+   - `scripts/mantis-build-installer-windows.bat <DAEDALUS-VERSION>`
+
+The resulting installer can be found at:
+   - on OS X:    `${BUILD}/installers/dist/Daedalus-installer-*.pkg`
+   - on Windows: `${BUILD}/installers/daedalus-win64-*-installer.exe`
+   
+Running the installer creates a desktop (on Windows) or docker (on MacOS) shortcut which can be used to start a background process running the Mantis client.
+
+The application installed can be uninstalled by:
+   - on OS X:    deleting the application located on `/Applications/Daedalus.app`
+   - on Windows: running `C:\Program Files\Daedalus\unistaller.exe`
+
+
+### Cardano one-click build-fresh-daedalus scripts
 
 These rely on the scripts from the previous section, but also go to a certain
 trouble to ensure that dependencies are installed, and even check out a fresh
