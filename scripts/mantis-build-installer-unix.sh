@@ -11,7 +11,7 @@ usage() {
     test -z "$1" || { echo "ERROR: $*" >&2; echo >&2; }
     cat >&2 <<EOF
   Usage:
-    $0 DAEDALUS-VERSION OPTIONS*
+    $0 DAEDALUS-VERSION MANTIS-LOCATION OPTIONS*
 
   Build a Daedalus installer.
 
@@ -56,7 +56,7 @@ upload_s3=
 test_install=
 
 daedalus_version="$1"; arg2nz "daedalus version" $1; shift
-mantis_location="/Users/dev/Documents/mantis-client/mantis/target/jdkpackager/bundles/mantis.app"
+mantis_location="$1"; arg2nz "mantis package location" $1; shift
 
 case "$(uname -s)" in
         Darwin ) os=osx;   key=macos-3.p12;;

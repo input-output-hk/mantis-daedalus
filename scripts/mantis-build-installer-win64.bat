@@ -17,8 +17,10 @@ set NSIS_URL=https://downloads.sourceforge.net/project/nsis/NSIS%%203/%NSISVER%/
 set NSIS_PATCH_URL=https://downloads.sourceforge.net/project/nsis/NSIS%%203/%NSISVER%/nsis-%NSISVER%-strlen_8192.zip
 set LIBRESSL_URL=https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-%LIBRESSL_VERSION%-windows.zip
 
-rem Location of the mantis client with the embedded JVM (FIXME: this should be changed to be later downloaded)
-set MANTIS_LOCATION=..\etc-client\target\jdkpackager\bundles\mantis
+rem Location of the mantis client with the embedded JVM is configurable
+set MANTIS_LOCATION=%1
+@if [%MANTIS_LOCATION%]==[]   (@echo ERROR: MANTIS_LOCATION [argument #1] was not provided, terminating installation
+    exit /b 1);
 
 @echo Building Daedalus version:  %DAEDALUS_VERSION%
 @echo ..with LibreSSL version:    %LIBRESSL_VERSION%

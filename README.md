@@ -1,5 +1,5 @@
-# daedalus
-Daedalus - cryptocurrency wallet
+# daedalus-mantis
+[Daedalus - cryptocurrency wallet](https://github.com/input-output-hk/daedalus) packed with the [Mantis client](https://github.com/input-output-hk/mantis).
 
 ## Automated build
 
