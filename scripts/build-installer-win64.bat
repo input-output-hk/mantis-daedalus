@@ -9,7 +9,7 @@ rem   installer dev mode:  set SKIP_TO_FRONTEND/SKIP_TO_INSTALLER
 set MIN_CARDANO_BYTES=50000000
 set LIBRESSL_VERSION=2.5.3
 set CURL_VERSION=7.54.0
-set CARDANO_BRANCH_DEFAULT=cardano-sl-0.6-staging
+set CARDANO_BRANCH_DEFAULT=cardano-sl-1.0
 set DAEDALUS_VERSION_DEFAULT=local-dev-build-%CARDANO_BRANCH_DEFAULT%
 
 set DAEDALUS_VERSION=%1
@@ -26,7 +26,7 @@ set NSIS_URL=https://downloads.sourceforge.net/project/nsis/NSIS%%203/%NSISVER%/
 set NSIS_PATCH_URL=https://downloads.sourceforge.net/project/nsis/NSIS%%203/%NSISVER%/nsis-%NSISVER%-strlen_8192.zip
 set CARDANO_URL=https://ci.appveyor.com/api/projects/jagajaga/cardano-sl/artifacts/CardanoSL.zip?branch=%CARDANO_BRANCH%
 set LIBRESSL_URL=https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-%LIBRESSL_VERSION%-windows.zip
-set DLLS_URL=https://s3.eu-central-1.amazonaws.com/cardano-sl-testing/DLLs.zip
+set DLLS_URL=https://s3.eu-central-1.amazonaws.com/daedalus-ci-binaries/DLLs.zip
 
 @echo Building Daedalus version:  %DAEDALUS_VERSION%
 @echo ..with Cardano branch:      %CARDANO_BRANCH%
@@ -92,9 +92,18 @@ pushd node_modules\daedalus-client-api
     del CardanoSL.zip
 popd
 
+@echo cardano-sl build-id:
+type node_modules\daedalus-client-api\build-id
+@echo cardano-sl commit-id:
+type node_modules\daedalus-client-api\commit-id
+@echo cardano-sl ci-url:
+type node_modules\daedalus-client-api\ci-url
+
 move   node_modules\daedalus-client-api\log-config-prod.yaml installers\log-config-prod.yaml
 move   node_modules\daedalus-client-api\cardano-node.exe     installers\
 move   node_modules\daedalus-client-api\cardano-launcher.exe installers\
+move   node_modules\daedalus-client-api\configuration.yaml installers\
+move   node_modules\daedalus-client-api\*genesis*.json installers\
 del /f node_modules\daedalus-client-api\*.exe
 
 :build_frontend

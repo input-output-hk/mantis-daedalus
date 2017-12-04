@@ -9,9 +9,9 @@ import { defineMessages, intlShape } from 'react-intl';
 // import SimpleSwitchSkin from 'react-polymorph/lib/skins/simple/SwitchSkin';
 import DialogCloseButton from '../../widgets/DialogCloseButton';
 import Dialog from '../../widgets/Dialog';
-import ReactToolboxMobxForm from '../../../lib/ReactToolboxMobxForm';
+import ReactToolboxMobxForm from '../../../utils/ReactToolboxMobxForm';
 import FileUploadWidget from '../../widgets/forms/FileUploadWidget';
-import { isValidWalletName, isValidWalletPassword, isValidRepeatPassword } from '../../../lib/validations';
+import { isValidWalletName, isValidWalletPassword, isValidRepeatPassword } from '../../../utils/validations';
 import globalMessages from '../../../i18n/global-messages';
 import LocalizableError from '../../../i18n/LocalizableError';
 import styles from './WalletFileImportDialog.scss';
@@ -74,15 +74,19 @@ const messages = defineMessages({
   },
 });
 
-@observer
-export default class WalletFileImportDialog extends Component {
+type Props = {
+  onSubmit: Function,
+  onClose: Function,
+  isSubmitting: boolean,
+  error: ?LocalizableError,
+};
 
-  props: {
-    onSubmit: Function,
-    onClose: Function,
-    isSubmitting: boolean,
-    error: ?LocalizableError,
-  };
+type State = {
+  createPassword: boolean,
+};
+
+@observer
+export default class WalletFileImportDialog extends Component<Props, State> {
 
   state = {
     createPassword: false,
@@ -100,9 +104,9 @@ export default class WalletFileImportDialog extends Component {
   form = new ReactToolboxMobxForm({
     fields: {
       walletFile: {
-        type: 'file',
         label: this.context.intl.formatMessage(messages.walletFileLabel),
         placeholder: this.context.intl.formatMessage(messages.walletFileHint),
+        type: 'file',
       },
       walletName: {
         label: this.context.intl.formatMessage(messages.walletNameInputLabel),
@@ -192,7 +196,7 @@ export default class WalletFileImportDialog extends Component {
         className: isSubmitting ? styles.isSubmitting : null,
         label: intl.formatMessage(messages.submitLabel),
         primary: true,
-        disabled: !(walletFile.value instanceof File),
+        disabled: isSubmitting || !(walletFile.value instanceof File),
         onClick: this.submit,
       }
     ];
@@ -207,7 +211,7 @@ export default class WalletFileImportDialog extends Component {
         title={intl.formatMessage(messages.headline)}
         actions={actions}
         closeOnOverlayClick
-        onClose={!isSubmitting ? onClose : null}
+        onClose={onClose}
         closeButton={<DialogCloseButton />}
       >
 
@@ -215,7 +219,10 @@ export default class WalletFileImportDialog extends Component {
           <FileUploadWidget
             {...walletFile.bind()}
             selectedFile={walletFile.value}
-            onFileSelected={walletFile.onChange}
+            onFileSelected={(file) => {
+              // "set(value)" is an unbound method and thus must be explicitly called
+              walletFile.set(file);
+            }}
           />
         </div>
 

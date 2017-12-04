@@ -4,17 +4,18 @@ module MacInstaller where
 --- An overview of Mac .pkg internals:  http://www.peachpit.com/articles/article.aspx?p=605381&seqNum=2
 ---
 
-import           Control.Monad      (unless)
-import           Data.Maybe         (fromMaybe)
-import           Data.Monoid        ((<>))
-import qualified Data.Text          as T
+import           Control.Monad        (unless)
+import           Data.Maybe           (fromMaybe)
+import           Data.Monoid          ((<>))
+import qualified Data.Text            as T
 import           System.Directory
-import           System.Environment (lookupEnv)
-import           Turtle             (ExitCode (..), echo, procs, shell, shells)
-import           Turtle.Line        (unsafeTextToLine)
+import           System.Environment   (lookupEnv)
+import           System.FilePath.Glob (glob)
+import           Turtle               (ExitCode (..), echo, procs, shell, shells)
+import           Turtle.Line          (unsafeTextToLine)
 
 import           Launcher
-import           RewriteLibs        (chain)
+import           RewriteLibs          (chain)
 
 
 main :: IO ()
@@ -34,9 +35,10 @@ main = do
   copyFile "cardano-launcher" (dir <> "/cardano-launcher")
   copyFile "cardano-node" (dir <> "/cardano-node")
   copyFile "wallet-topology.yaml" (dir <> "/wallet-topology.yaml")
+  copyFile "configuration.yaml" (dir <> "/configuration.yaml")
+  genesisFiles <- glob "*genesis*.json"
+  procs "cp" (fmap T.pack (genesisFiles <> [dir])) mempty
   copyFile "log-config-prod.yaml" (dir <> "/log-config-prod.yaml")
-  copyFile "data/ip-dht-mappings" (dir <> "/ip-dht-mappings")
-  copyFile "data/ip-dht-mappings" (dir <> "/ip-dht-mappings")
   copyFile "build-certificates-unix.sh" (dir <> "/build-certificates-unix.sh")
   copyFile "ca.conf"     (dir <> "/ca.conf")
   copyFile "server.conf" (dir <> "/server.conf")
@@ -52,7 +54,8 @@ main = do
   writeFile (dir <> "/Daedalus") $ unlines
     [ "#!/usr/bin/env bash"
     , "cd \"$(dirname $0)\""
-    , "mkdir -p \"$HOME/Library/Application Support/Daedalus/Secrets-0.6\""
+    , "mkdir -p \"$HOME/Library/Application Support/Daedalus/Secrets-1.0\""
+    , "mkdir -p \"$HOME/Library/Application Support/Daedalus/Logs/pub\""
     , doLauncher
     ]
   run "chmod" ["+x", T.pack (dir <> "/Daedalus")]
@@ -102,6 +105,7 @@ doLauncher = "./cardano-launcher " <> (launcherArgs $ Launcher
   { nodePath = "./cardano-node"
   , walletPath = "./Frontend"
   , nodeLogPath = appdata <> "Logs/cardano-node.log"
+  , launcherLogPath = appdata <> "Logs/pub/"
   , windowsInstallerPath = Nothing
   , runtimePath = appdata
   , updater =
