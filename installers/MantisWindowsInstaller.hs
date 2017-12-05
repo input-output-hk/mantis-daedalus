@@ -14,7 +14,7 @@ mantisLauncherScript =
   [ "@echo off"
   , "SET DAEDALUS_DIR=%~dp0"
   , "start /D \"%DAEDALUS_DIR%mantis\" mantis.exe " --Start the Mantis client
---  , "start /D \"%DAEDALUS_DIR%\" Daedalus.exe " --Start the Daedalus wallet (FIXME: temporarily disabled as the Mantis client can't properly connect with it yet)
+  , "start /D \"%DAEDALUS_DIR%\" Daedalus.exe " --Start the Daedalus wallet (FIXME: temporarily disabled as the Mantis client can't properly connect with it yet)
   ]
 
 mantisWriteInstallerNSIS :: String -> IO ()
@@ -49,17 +49,19 @@ mantisWriteInstallerNSIS fullVersion = do
         createDirectory "$APPDATA\\Daedalus\\Secrets-0.6"
         --FIXME: Make Mantis logs location configurable so as to have them be in this Logs folder
         createDirectory "$APPDATA\\Daedalus\\Logs"
+        createDirectory "$APPDATA\\Daedalus\\Logs\\pub"
         createShortcut "$DESKTOP\\Daedalus.lnk" daedalusShortcut
-        file [] "data\\ip-dht-mappings"
         file [] "version.txt"
         file [] "build-certificates-win64.bat"
         file [] "ca.conf"
         file [] "server.conf"
         file [] "client.conf"
         file [] "wallet-topology.yaml"
+        file [] "configuration.yaml"
+        file [] "*genesis*.json"
         writeFileLines "$INSTDIR\\daedalus.bat" (map str mantisLauncherScript)
         file [Recursive] "libressl\\"
-        file [Recursive] "..\\release\\win32-x64\\Daedalus-win32-x64\\"
+        file [Recursive] "..\\release\\w\\"
         setOutPath "$INSTDIR\\mantis\\"
         file [Recursive] "mantis\\"
         setOutPath "$INSTDIR"
@@ -71,6 +73,7 @@ mantisWriteInstallerNSIS fullVersion = do
           ]
 
         execWait "build-certificates-win64.bat \"$INSTDIR\" >\"%APPDATA%\\Daedalus\\Logs\\build-certificates.log\" 2>&1"
+        execWait "build-keystore-win64.bat \"$INSTDIR\\libressl\\x64\\openssl \"$INSTDIR\\mantis\\mantis.exe \"$INSTDIR\\tls \"$INSTDIR\\keystore-folder"
 
         -- Uninstaller
         writeRegStr HKLM "Software/Microsoft/Windows/CurrentVersion/Uninstall/Daedalus" "InstallLocation" "$INSTDIR\\Daedalus"
