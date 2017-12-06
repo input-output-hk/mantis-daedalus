@@ -13,9 +13,13 @@ mantisLauncherScript :: [String]
 mantisLauncherScript =
   [ "@echo off"
   , "SET DAEDALUS_DIR=%~dp0"
-  , "start /D \"%DAEDALUS_DIR%mantis\" mantis.exe " --Start the Mantis client
+  , "start /D \"%DAEDALUS_DIR%mantis\" mantis.exe" --Start the Mantis client
   , "start /D \"%DAEDALUS_DIR%\" Daedalus.exe " --Start the Daedalus wallet (FIXME: temporarily disabled as the Mantis client can't properly connect with it yet)
   ]
+  where httpsArgs = "-J-Dmantis.network.rpc.mode=https" <>
+                    "-J-Dmantis.network.rpc.certificate-keystore-path=\"%DAEDALUS_DIR%certificate-keystore\\mantisKeystore.p12\"" <>
+                    "-J-Dmantis.network.rpc.certificate-keystore-type=\"PKCS12\"" <>
+                    "-J-Dmantis.network.rpc.certificate-password-file=\"%DAEDALUS_DIR%certificate-keystore\\keystore-password.txt\""
 
 mantisWriteInstallerNSIS :: String -> IO ()
 mantisWriteInstallerNSIS fullVersion = do
@@ -53,6 +57,7 @@ mantisWriteInstallerNSIS fullVersion = do
         createShortcut "$DESKTOP\\Daedalus.lnk" daedalusShortcut
         file [] "version.txt"
         file [] "build-certificates-win64.bat"
+        file [] "build-keystore-win64.bat"
         file [] "ca.conf"
         file [] "server.conf"
         file [] "client.conf"
@@ -73,7 +78,9 @@ mantisWriteInstallerNSIS fullVersion = do
           ]
 
         execWait "build-certificates-win64.bat \"$INSTDIR\" >\"%APPDATA%\\Daedalus\\Logs\\build-certificates.log\" 2>&1"
-        execWait "build-keystore-win64.bat \"$INSTDIR\\libressl\\x64\\openssl \"$INSTDIR\\mantis\\mantis.exe \"$INSTDIR\\tls \"$INSTDIR\\keystore-folder"
+
+        createDirectory "$INSTDIR\\certificate-keystore"
+        execWait "build-keystore-win64.bat \"$INSTDIR\\x64\\openssl\" \"$INSTDIR\\mantis\\mantis.exe\" \"$INSTDIR\\tls\" \"$INSTDIR\\certificate-keystore\" >\"%APPDATA%\\Daedalus\\Logs\\build-keystore.log\" 2>&1"
 
         -- Uninstaller
         writeRegStr HKLM "Software/Microsoft/Windows/CurrentVersion/Uninstall/Daedalus" "InstallLocation" "$INSTDIR\\Daedalus"

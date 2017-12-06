@@ -20,6 +20,6 @@ pushd %TARGET_FOLDER%
 	echo %KEYSTORE_PASSWORD% > keystore-password.txt
 
   @echo Create keystore from certificates
-	start %LIBRESSL_EXEC% pkcs12 -export -name mantisCA -in %TLS_FOLDER%\server.crt -inkey %TLS_FOLDER%\server.key -out %KEYSTORE_FILE% -nodes -password file:%PASSWORD_FILE%
-	start %MANTIS_EXEC% keytool -import -trustcacerts -v -alias ca -keystore %KEYSTORE_FILE% -keyalg RSA -keysize 4096 -keypass:env %KEYSTORE_PASSWORD% -storepass:env %KEYSTORE_PASSWORD%-ext KeyUsage:critical="keyCertSign" -ext BasicConstraints:critical="ca:true" -validity 9999 -file %TLS_FOLDER%\ca.crt -storetype pkcs12
+	%LIBRESSL_EXEC% pkcs12 -export -name mantisCA -in %TLS_FOLDER%\server\server.crt -inkey %TLS_FOLDER%\server\server.key -out %KEYSTORE_FILE% -nodes -password file:%PASSWORD_FILE%
+	%MANTIS_EXEC% keytool -import -trustcacerts -v -alias ca -keystore %KEYSTORE_FILE% -keyalg RSA -keysize 4096 -keypass:env %KEYSTORE_PASSWORD% -storepass:env %KEYSTORE_PASSWORD% -ext KeyUsage:critical="keyCertSign" -ext BasicConstraints:critical="ca:true" -validity 9999 -file %TLS_FOLDER%\ca\ca.crt -storetype pkcs12
 popd
