@@ -13,13 +13,14 @@ mantisLauncherScript :: [String]
 mantisLauncherScript =
   [ "@echo off"
   , "SET DAEDALUS_DIR=%~dp0"
+  , "SET API=etc"
   , "start /D \"%DAEDALUS_DIR%mantis\" mantis.exe" --Start the Mantis client
   , "start /D \"%DAEDALUS_DIR%\" Daedalus.exe " --Start the Daedalus wallet (FIXME: temporarily disabled as the Mantis client can't properly connect with it yet)
   ]
-  where httpsArgs = "-J-Dmantis.network.rpc.mode=https" <>
-                    "-J-Dmantis.network.rpc.certificate-keystore-path=\"%DAEDALUS_DIR%certificate-keystore\\mantisKeystore.p12\"" <>
-                    "-J-Dmantis.network.rpc.certificate-keystore-type=\"PKCS12\"" <>
-                    "-J-Dmantis.network.rpc.certificate-password-file=\"%DAEDALUS_DIR%certificate-keystore\\keystore-password.txt\""
+  where httpsArgs = "-Dmantis.network.rpc.mode=https" <>
+                    "-Dmantis.network.rpc.certificate-keystore-path=\"%DAEDALUS_DIR%certificate-keystore\\mantisKeystore.p12\"" <>
+                    "-Dmantis.network.rpc.certificate-keystore-type=\"PKCS12\"" <>
+                    "-Dmantis.network.rpc.certificate-password-file=\"%DAEDALUS_DIR%certificate-keystore\\keystore-password.txt\""
 
 mantisWriteInstallerNSIS :: String -> IO ()
 mantisWriteInstallerNSIS fullVersion = do
