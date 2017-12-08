@@ -149,7 +149,7 @@ writeInstallerNSIS fullVersion = do
         writeFileLines "$INSTDIR\\daedalus.bat" (map str launcherScript)
         file [Recursive] "dlls\\"
         file [Recursive] "libressl\\"
-        file [Recursive] "..\\release\\win32-x64\\Daedalus-win32-x64\\"
+        file [Recursive] "..\\release\\Daedalus-win32-x64\\"
 
         mapM_ unsafeInject
           [ "liteFirewall::AddRule \"$INSTDIR\\cardano-node.exe\" \"Cardano Node\""

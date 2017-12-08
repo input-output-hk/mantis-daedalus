@@ -26,7 +26,7 @@ test_script:
   - scripts\build-installer-win64.bat %APPVEYOR_BUILD_VERSION% cardano-sl-1.0
 
 artifacts:
-  - path: release\win32-x64\Daedalus-win32-x64
+  - path: release\Daedalus-win32-x64
     name: Daedalus Electron application
     type: zip
   - path: installers\daedalus-win64-*-installer.exe

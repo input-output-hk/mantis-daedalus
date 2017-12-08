@@ -63,11 +63,9 @@ mantisWriteInstallerNSIS fullVersion = do
         file [] "server.conf"
         file [] "client.conf"
         file [] "wallet-topology.yaml"
-        file [] "configuration.yaml"
-        file [] "*genesis*.json"
         writeFileLines "$INSTDIR\\daedalus.bat" (map str mantisLauncherScript)
         file [Recursive] "libressl\\"
-        file [Recursive] "..\\release\\w\\"
+        file [Recursive] "..\\release\\Daedalus-win32-x64\\"
         setOutPath "$INSTDIR\\mantis\\"
         file [Recursive] "mantis\\"
         setOutPath "$INSTDIR"

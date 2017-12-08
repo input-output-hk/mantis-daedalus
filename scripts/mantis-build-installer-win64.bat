@@ -3,8 +3,7 @@ rem   1. Node.js ('npm' binary in PATH)
 rem   2. 7zip    ('7z'  binary in PATH)
 rem   3. git
 rem   4. Windows SDK
-rem   5. python  ('python' binary in PATH) FIXME: Is it needed with windows-build-tools?
-rem   6. Install windows build tools "npm install -g windows-build-tools"
+rem   5. Install windows build tools: "npm install -g windows-build-tools"
 rem
 rem   installer dev mode:  set SKIP_TO_FRONTEND/SKIP_TO_INSTALLER
 
