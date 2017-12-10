@@ -43,9 +43,12 @@ executable mantis-make-installer
                      , RewriteLibs
                      , Launcher
   build-depends:       base
+                     , ConfigFile
                      , filepath
                      , text
                      , Glob
+                     , MissingH
+                     , mtl
                      , nsis
                      , turtle
                      , directory
