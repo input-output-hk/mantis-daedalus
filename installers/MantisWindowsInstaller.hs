@@ -1,67 +1,23 @@
 module MantisWindowsInstaller where
 
-import           Control.Monad.Error
-import           Data.Char          (isSpace)
-import           Data.ConfigFile    (readfile, set, to_string, optionxform, emptyCP, ConfigParser, CPError)
-import           Data.Either.Utils  (forceEither)
 import qualified Data.List          as L
-import qualified Data.String.Utils  as SU
 import           Data.Maybe         (fromJust, fromMaybe)
 import           Data.Monoid        ((<>))
 import           Development.NSIS
-import           System.Environment (lookupEnv, getEnvironment)
-import           Turtle             (ExitCode (..), echo, proc, procs)
+import           System.Environment (lookupEnv)
+import           Turtle             (echo, procs)
 
+import           InstallerUtils     (configurationWithHTTPS, writeConfigParser)
 import           WindowsInstaller
-
-defaultCP :: ConfigParser
-defaultCP = emptyCP {optionxform = id}
-
--- Given a string, does the following changes:
---    - Replace the first ": " on it with "="
---    - Remove the ": " if there's no configuration following it
-replaceFirstColonWithEqual :: String -> String
-replaceFirstColonWithEqual l
-  | (dropWhile isSpace $ snd optionForm) == ""  = fst optionForm
-  | otherwise                                   = fst optionForm ++ "=" ++ (snd optionForm)
-    where unconsRes = fromMaybe ("", []) $ L.uncons $ SU.split ": " l
-          optionForm = (fst unconsRes, SU.join ": " $ snd unconsRes)
-
--- Parses each line of the configuration, changing only the option forms to the supported format
-reformatMaybeOptionForm :: String -> String
-reformatMaybeOptionForm l
-  | L.isInfixOf ": " l  = replaceFirstColonWithEqual l
-  | otherwise   = l
-
--- Parses the configuration so that it has the format supported by Mantis
--- For this, the option forms should have the format:
---     "flag[=configuration]"
--- Instead of the default:  "flag: [configuration]"
-reformatConfiguration :: String -> String
-reformatConfiguration config = unlines $ map reformatMaybeOptionForm $ lines config
-
--- Overrides (or creates) a file with the ConfigParser configuration
-writeConfigParser ::Either CPError ConfigParser -> String -> IO ()
-writeConfigParser maybeCP confFile = writeFile confFile stringConf
-    where stringConf = reformatConfiguration $ to_string $ forceEither maybeCP
-
--- Adds Mantis configuration for HTTPS support
-configurationWithHTTPS :: String -> String -> IO (Either CPError ConfigParser)
-configurationWithHTTPS confFile daedalusDir = runErrorT $ do
-  cp <- join $ liftIO $ readfile defaultCP confFile
-  cp <- set cp "JVMOptions" "-Dmantis.network.rpc.mode" "https"
-  cp <- set cp "JVMOptions" "-Dmantis.network.rpc.certificate-keystore-path" (daedalusDir <> "certificate-keystore\\mantisKeystore.p12")
-  cp <- set cp "JVMOptions" "-Dmantis.network.rpc.certificate-keystore-type" "PKCS12"
-  cp <- set cp "JVMOptions" "-Dmantis.network.rpc.certificate-password-file" (daedalusDir <> "certificate-keystore\\keystore-password.txt")
-  return cp
 
 mantisLauncherScript :: [String]
 mantisLauncherScript =
   [ "@echo off"
   , "SET DAEDALUS_DIR=%~dp0"
   , "SET API=etc"
-  , "start /D \"%DAEDALUS_DIR%mantis\" mantis.exe" --Start the Mantis client
-  , "start /D \"%DAEDALUS_DIR%\" Daedalus.exe " --Start the Daedalus wallet (FIXME: temporarily disabled as the Mantis client can't properly connect with it yet)
+  , "start /D \"%DAEDALUS_DIR%mantis\" mantis.exe"    --Start the Mantis client
+  , "start /WAIT /D \"%DAEDALUS_DIR%\" Daedalus.exe " --Start the Daedalus wallet
+  , "taskkill /F /T /IM mantis.exe"                   --Kill the Mantis client once the Daedalus wallet is stopped
   ]
 
 mantisWriteInstallerNSIS :: String -> IO ()

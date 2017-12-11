@@ -18,7 +18,7 @@ set KEYSTORE_PASSWORD=12345678
 if not exist %TARGET_FOLDER% mkdir %TARGET_FOLDER%
 pushd %TARGET_FOLDER%
   @echo Password file creation
-	echo %KEYSTORE_PASSWORD% > PASSWORD_FILE
+	echo %KEYSTORE_PASSWORD% > %PASSWORD_FILE%
 
   @echo Create keystore from certificates
 	%LIBRESSL_EXEC% pkcs12 -export -name mantisCA -in %TLS_FOLDER%\server\server.crt -inkey %TLS_FOLDER%\server\server.key -out %KEYSTORE_FILE% -nodes -password file:%PASSWORD_FILE%
